@@ -1,97 +1,84 @@
-# Lung Image Segmentation
+# Lung Image Segmentation using Deep Learning
 
 ## Overview
-This repository contains an implementation of lung image segmentation using deep learning techniques. The project focuses on segmenting lung regions from medical imaging datasets, which is crucial for analyzing lung diseases such as pneumonia, tuberculosis, and COVID-19. The approach utilizes convolutional neural networks (CNNs) for feature extraction and segmentation.
-
-## Table of Contents
-- [Introduction](#introduction)
-- [Dataset](#dataset)
-- [Preprocessing](#preprocessing)
-- [Model Architecture](#model-architecture)
-- [Loss Function](#loss-function)
-- [Training Process](#training-process)
-- [Evaluation Metrics](#evaluation-metrics)
-- [Results](#results)
-- [Usage](#usage)
-- [Conclusion](#conclusion)
-
-## Introduction
-Lung image segmentation is a critical step in medical image analysis, enabling automated diagnosis and treatment planning. This project implements a deep learning-based segmentation model to extract lung regions from medical images. The primary goal is to improve segmentation accuracy for better disease detection.
+This project implements lung image segmentation using deep learning techniques, specifically leveraging TensorFlow/Keras. The goal is to segment lung regions from medical images using convolutional neural network (CNN)-based models. Three different models have been implemented and compared to determine the best-performing approach.
 
 ## Dataset
-The dataset used in this project consists of lung CT scans or X-ray images. It includes:
-- **Raw Images**: Original medical images containing lung regions.
-- **Ground Truth Masks**: Binary masks indicating the lung regions for supervised learning.
+The dataset used for this project is the **Montgomery Dataset**, which consists of lung X-ray images and their corresponding segmentation masks.
 
-### Data Source
-The dataset is sourced from publicly available repositories such as NIH, Kaggle, or medical imaging databases.
+- **Image Path:** `Montgomery/img/`
+- **Mask Path:** `Montgomery/mask/`
+- **Image Format:** Grayscale images, resized to `(256, 256)`
 
-## Preprocessing
-To ensure the model receives clean and normalized data, the preprocessing steps include:
-1. **Resizing**: Images are resized to a fixed dimension (e.g., 256x256) for uniform input size.
-2. **Normalization**: Pixel values are normalized to a range of [0,1] to improve model convergence.
-3. **Data Augmentation**: Techniques such as rotation, flipping, and contrast adjustments are applied to increase dataset diversity and improve model generalization.
-4. **Mask Preprocessing**: The ground truth masks are processed to ensure they correctly align with the input images.
+## Preprocessing Steps
+1. Read images and masks using OpenCV (`cv2`).
+2. Resize images and masks to `(256, 256)`.
+3. Normalize images to the range `[0, 1]`.
+4. Threshold masks to ensure binary segmentation.
 
-## Model Architecture
-The model used for lung segmentation is based on a U-Net architecture, a popular CNN-based model for biomedical image segmentation.
+## Model Architectures
+Three different deep learning models were implemented and compared:
 
-### Layers:
-1. **Encoder**: Extracts features using convolutional and pooling layers.
-2. **Bottleneck**: Connects the encoder and decoder while preserving spatial information.
-3. **Decoder**: Uses transposed convolutions to reconstruct the segmented image.
-4. **Output Layer**: A final convolutional layer with a sigmoid activation function to generate pixel-wise segmentation maps.
+1. **U-Net**: A widely used architecture for medical image segmentation with encoder-decoder layers.
+2. **ResUNet**: A variation of U-Net that incorporates residual connections to improve feature propagation and gradient flow.
+3. **R2U-Net (Recurrent Residual U-Net)**: An extension of ResUNet that introduces recurrent connections within residual blocks to enhance feature extraction.
 
-## Loss Function
-The Dice Loss function is used to optimize segmentation accuracy, defined as:
-
-$\ L = 1 - \frac{2 |A \cap B|}{|A| + |B|} \$
-
-where A represents the predicted mask and B represents the ground truth mask.
+### Loss Function & Metrics
+- **Dice Coefficient**: Measures overlap between predicted and ground truth masks.
+- **Dice Loss**: Used for optimization, defined as `1 - Dice Coefficient`.
+- **Evaluation Metrics**:
+  - Accuracy
+  - Precision
+  - Recall
+  - F1-Score
+  - Confusion Matrix
 
 ## Training Process
-The model is trained using:
-1. **Batch Size**: 16
-2. **Optimizer**: Adam optimizer for efficient convergence.
-3. **Loss Function**: Dice loss.
-4. **Epochs**: 50 epochs with early stopping to prevent overfitting.
+- **Optimizer:** Adam
+- **Batch Size:** 16
+- **Epochs:** 50
+- **Callbacks:**
+  - `ModelCheckpoint`: Saves the best model.
+  - `EarlyStopping`: Stops training if validation loss does not improve.
+  - `ReduceLROnPlateau`: Adjusts learning rate dynamically.
+- **GPU Optimization:** TensorFlow is configured to use GPU with memory growth enabled.
 
-## Evaluation Metrics
-The model performance is evaluated using:
-1. **Dice Coefficient**: Measures segmentation overlap between predicted and ground truth masks.
-2. **Intersection over Union (IoU)**: Evaluates the overlap between predicted and true lung regions.
-3. **Accuracy**: Computes pixel-wise accuracy of the segmentation.
+## Model Evaluation
+The trained models are evaluated on test data using:
+- Accuracy
+- Precision, Recall, and F1-Score
+- Confusion Matrix & Classification Report
 
-## Results
-The model achieves high accuracy in segmenting lung regions from medical images, with the following performance:
+A comparative analysis of the three models is also included, showing their respective performance metrics.
 
-- **Dice Coefficient**: 0.92
-- **IoU Score**: 0.88
-- **Pixel Accuracy**: 97%
+## How to Run
+### Prerequisites
+Ensure you have the following installed:
+```bash
+pip install tensorflow numpy pandas opencv-python matplotlib seaborn scikit-learn
+```
 
-## Usage
-To use the model for segmentation:
+### Running the Notebook
+1. Clone this repository:
+```bash
+git clone https://github.com/yourusername/LungImageSeg.git
+cd LungImageSeg
+```
+2. Open the Jupyter Notebook:
+```bash
+jupyter notebook LungImageSeg.ipynb
+```
+3. Run all cells to train and evaluate the models.
 
-1. Install dependencies:
-    ```bash
-    pip install tensorflow numpy opencv-python
-    ```
-2. Load and preprocess images:
-    ```python
-    image, mask = preprocess_image(cv2.imread('lung_image.png', 0), cv2.imread('mask.png', 0))
-    ```
-3. Predict segmentation:
-    ```python
-    prediction = model.predict(image.reshape(1, 256, 256, 1))
-    ```
-4. Display results:
-    ```python
-    import matplotlib.pyplot as plt
-    plt.imshow(prediction[0, :, :, 0], cmap='gray')
-    plt.show()
-    ```
+## Results & Visualization
+- The segmented lung images are displayed using Matplotlib.
+- Performance metrics are visualized with seaborn.
+- Comparison charts show the effectiveness of the three different models.
 
-## Conclusion
-This project demonstrates an efficient deep learning-based approach to lung image segmentation, which can be further improved with additional datasets, advanced architectures, and post-processing techniques.
+## Future Improvements
+- Implementing advanced architectures like Attention U-Net or Transformer-based segmentation models.
+- Using more diverse datasets for better generalization.
+- Hyperparameter tuning for improved accuracy.
+
 
 
