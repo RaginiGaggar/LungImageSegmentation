@@ -45,7 +45,7 @@ The model used for lung segmentation is based on a U-Net architecture, a popular
 ## Loss Function
 The Dice Loss function is used to optimize segmentation accuracy, defined as:
 
-\[ L = 1 - \frac{2 |A \cap B|}{|A| + |B|} \]
+$\ L = 1 - \frac{2 |A \cap B|}{|A| + |B|} \$
 
 where A represents the predicted mask and B represents the ground truth mask.
 
