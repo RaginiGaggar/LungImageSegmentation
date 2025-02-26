@@ -1,84 +1,133 @@
-# Lung Image Segmentation using Deep Learning
+# Lung Image Segmentation
 
 ## Overview
-This project implements lung image segmentation using deep learning techniques, specifically leveraging TensorFlow/Keras. The goal is to segment lung regions from medical images using convolutional neural network (CNN)-based models. Three different models have been implemented and compared to determine the best-performing approach.
+This project focuses on lung image segmentation using deep learning techniques, specifically U-Net, ResUNet, and RNGUNet. The goal is to accurately segment lung regions from medical images using convolutional neural networks.
 
-## Dataset
-The dataset used for this project is the **Montgomery Dataset**, which consists of lung X-ray images and their corresponding segmentation masks.
+## Features
+- Implements three deep learning architectures: U-Net, ResUNet, and RNGUNet.
+- Uses Dice Coefficient and Dice Loss as key metrics for evaluation.
+- Trains models using TensorFlow and Keras.
+- Evaluates model performance with accuracy, precision, recall, and F1-score.
+- Provides visualization of segmentation results.
 
-- **Image Path:** `Montgomery/img/`
-- **Mask Path:** `Montgomery/mask/`
-- **Image Format:** Grayscale images, resized to `(256, 256)`
+## Dependencies
+The project requires the following Python libraries:
 
-## Preprocessing Steps
-1. Read images and masks using OpenCV (`cv2`).
-2. Resize images and masks to `(256, 256)`.
-3. Normalize images to the range `[0, 1]`.
-4. Threshold masks to ensure binary segmentation.
+```python
+import os
+import cv2
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, precision_score, recall_score, f1_score
+from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Multiply
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
+```
 
 ## Model Architectures
-Three different deep learning models were implemented and compared:
+### 1. U-Net
+A widely used architecture for medical image segmentation, consisting of an encoder-decoder structure with skip connections.
 
-1. **U-Net**: A widely used architecture for medical image segmentation with encoder-decoder layers.
-2. **ResUNet**: A variation of U-Net that incorporates residual connections to improve feature propagation and gradient flow.
-3. **R2U-Net (Recurrent Residual U-Net)**: An extension of ResUNet that introduces recurrent connections within residual blocks to enhance feature extraction.
-
-### Loss Function & Metrics
-- **Dice Coefficient**: Measures overlap between predicted and ground truth masks.
-- **Dice Loss**: Used for optimization, defined as `1 - Dice Coefficient`.
-- **Evaluation Metrics**:
-  - Accuracy
-  - Precision
-  - Recall
-  - F1-Score
-  - Confusion Matrix
-
-## Training Process
-- **Optimizer:** Adam
-- **Batch Size:** 16
-- **Epochs:** 50
-- **Callbacks:**
-  - `ModelCheckpoint`: Saves the best model.
-  - `EarlyStopping`: Stops training if validation loss does not improve.
-  - `ReduceLROnPlateau`: Adjusts learning rate dynamically.
-- **GPU Optimization:** TensorFlow is configured to use GPU with memory growth enabled.
-
-## Model Evaluation
-The trained models are evaluated on test data using:
-- Accuracy
-- Precision, Recall, and F1-Score
-- Confusion Matrix & Classification Report
-
-A comparative analysis of the three models is also included, showing their respective performance metrics.
-
-## How to Run
-### Prerequisites
-Ensure you have the following installed:
-```bash
-pip install tensorflow numpy pandas opencv-python matplotlib seaborn scikit-learn
+Function:
+```python
+def unet_model(input_size=(256, 256, 1)):
 ```
 
-### Running the Notebook
-1. Clone this repository:
-```bash
-git clone https://github.com/yourusername/LungImageSeg.git
-cd LungImageSeg
+### 2. ResUNet
+An extension of U-Net incorporating residual connections to improve gradient flow and training stability.
+
+Function:
+```python
+def ResUNet(input_shape=(256, 256, 1)):
 ```
-2. Open the Jupyter Notebook:
-```bash
-jupyter notebook LungImageSeg.ipynb
+
+### 3. RNGUNet
+A modified version of ResUNet incorporating additional enhancements for better segmentation performance.
+
+Function:
+```python
+def RNGUNet(input_shape=(256, 256, 1)):
 ```
-3. Run all cells to train and evaluate the models.
 
-## Results & Visualization
-- The segmented lung images are displayed using Matplotlib.
-- Performance metrics are visualized with seaborn.
-- Comparison charts show the effectiveness of the three different models.
+## Data Preprocessing
+- **Load and preprocess images**
 
-## Future Improvements
-- Implementing advanced architectures like Attention U-Net or Transformer-based segmentation models.
-- Using more diverse datasets for better generalization.
-- Hyperparameter tuning for improved accuracy.
+```python
+def load_data(img_path, mask_path, img_size=(256, 256)):
+```
 
+- **Splitting dataset**: Uses `train_test_split` to create training and testing sets.
 
+## Loss Function & Metrics
+- **Dice Coefficient** (measures overlap between predicted and ground truth masks)
+
+```python
+def dice_coefficient(y_true, y_pred):
+```
+
+- **Dice Loss** (1 - Dice Coefficient, used for training optimization)
+
+```python
+def dice_loss(y_true, y_pred):
+```
+
+## Training
+- **Optimization**: Adam optimizer
+- **Callbacks**: ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
+
+## Evaluation & Visualization
+- **Evaluate models on test set**:
+
+```python
+def evaluate_model(model, X_test, Y_test):
+```
+
+- **Visualize segmentation results**:
+
+```python
+def visualize_results(model, X_test, Y_test, num_images=5):
+```
+
+- **Plot training progress**:
+
+```python
+def plot_training_progress(history_dict, model_names):
+```
+
+- **Compare model performance**:
+
+```python
+def plot_model_comparison(metrics_dict):
+```
+
+- **Confusion matrices for evaluation**:
+
+```python
+def plot_confusion_matrices(y_true, y_preds, model_names, class_labels):
+```
+
+- **Create a comparison table**:
+
+```python
+def create_comparison_table(metrics_dict):
+```
+
+## Results
+The project provides segmentation results for different architectures and evaluates their effectiveness based on various metrics.
+
+## Usage
+1. Install dependencies using pip:
+```sh
+pip install tensorflow numpy pandas opencv-python seaborn matplotlib scikit-learn
+```
+2. Run the notebook to train and evaluate models.
+
+## Conclusion
+This project demonstrates deep learning techniques for lung image segmentation and compares different architectures to determine the most effective approach.
 
